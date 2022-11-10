@@ -158,7 +158,7 @@ class Bot:
 
     # Белый список торговых пар
     def whait_list(self):
-        wait_l = ['SAND_USDT']  # , 'SOL_USDT' , 'SAND_USDT'
+        wait_l = ['SAND_USDT', 'DYDX_USDT']  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
         return wait_l
 
     # Создаём необходимый датафрейм
