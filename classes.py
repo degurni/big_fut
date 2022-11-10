@@ -158,7 +158,7 @@ class Bot:
 
     # Белый список торговых пар
     def whait_list(self):
-        wait_l = ['DYDX_USDT', 'SAND_USDT']  # , 'SOL_USDT' , 'SAND_USDT'
+        wait_l = ['SAND_USDT']  # , 'SOL_USDT' , 'SAND_USDT'
         return wait_l
 
     # Создаём необходимый датафрейм
@@ -238,7 +238,7 @@ class Bot:
         k = False
         data = Bot().read_json(para)
         orders = len(data)
-        Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
+        # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
         average_price = None  # средняя цена входа закрываемых ордеров
@@ -255,10 +255,12 @@ class Bot:
 
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
-        Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
-                    .format(para, navar_price, mimo_price, orders))
+        Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
+                    .format(para, orders, navar_price, mimo_price))
+        # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
+        #             .format(para, navar_price, mimo_price, orders))
         if navar_price < df.Close[-1]:
-            AG().create_futures_order(side='short', contract=para, size=gen_size)
+            s = AG().create_futures_order(side='short', contract=para, size=gen_size)
             if 0 < orders <= 5:
                 data = []
             elif 5 < orders:
@@ -267,8 +269,8 @@ class Bot:
                 data.pop(0)
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
-            print(s)
-            Bot().debug('debug', '{} : дозакуп'.format(para))
+            # print(s)
+            Bot().debug('debug', '{} : добавляем {} по цене {}'.format(para, s.size, s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
@@ -285,7 +287,7 @@ class Bot:
         k = False
         data = Bot().read_json(para)
         orders = len(data)
-        Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
+        # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
         average_price = None  # средняя цена входа закрываемых ордеров
@@ -300,10 +302,13 @@ class Bot:
             average_price = (float(data[0]['price']) + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
-        Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
-                    .format(para, navar_price, mimo_price, orders))
+        Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
+                    .format(para, orders, navar_price, mimo_price))
+        # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
+        #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
-            AG().create_futures_order(side='long', contract=para, size=abs(gen_size) * -1)
+            s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
+            print(s)
             if 0 < orders <= 5:
                 data = []
             elif 5 < orders:
@@ -313,7 +318,7 @@ class Bot:
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             print(s)
-            Bot().debug('debug', '{} : дозакуп'.format(para))
+            Bot().debug('debug', '{} : добавляем {} по цене {}'.format(para, abs(s.size), s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
