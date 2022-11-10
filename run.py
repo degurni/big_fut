@@ -52,9 +52,13 @@ while True:
         if poz.size > 0:  # если уже открыта LONG-позиция
             # bot.debug('debug', '{}: LONG-позиция уже открыта'.format(para))
             t = bot.check_profit_long(df=df, para=para)
+            if t:
+                kol_poz -= 1
         elif poz.size < 0:  # если уже открыта SHORT-позиция
             # bot.debug('debug', '{}: SHORT-позиция уже открыта'.format(para))
             t = bot.check_profit_short(df=df, para=para)
+            if t:
+                kol_poz -= 1
 
     print('=' * 75)
     time.sleep(15)

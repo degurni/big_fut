@@ -235,6 +235,7 @@ class Bot:
 
     # проверяем профит LONG-позиции
     def check_profit_long(self, df, para):
+        k = False
         data = Bot().read_json(para)
         orders = len(data)
         Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
@@ -272,10 +273,14 @@ class Bot:
                    'price': s.fill_price,
                    'tkfr': s.tkfr}
             data.append(inf)
+        if len(data) == 0:
+            k = True
         Bot().write_json(data=data, para=para)
+        return k
 
     # проверяем профит SHORT-позиции
     def check_profit_short(self, df, para):
+        k = False
         data = Bot().read_json(para)
         orders = len(data)
         Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
@@ -311,7 +316,10 @@ class Bot:
                    'price': s.fill_price,
                    'tkfr': s.tkfr}
             data.append(inf)
+        if len(data) == 0:
+            k = True
         Bot().write_json(data=data, para=para)
+        return k
 
     # Высчитываем сколько контрактов на указанную сумму
     def usdt_contract(self, contract):
