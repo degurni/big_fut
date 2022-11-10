@@ -267,6 +267,8 @@ class Bot:
                 data.pop(0)
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
+            print(s)
+            Bot().debug('debug', '{} : дозакуп'.format(para))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
@@ -310,6 +312,8 @@ class Bot:
                 data.pop(0)
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
+            print(s)
+            Bot().debug('debug', '{} : дозакуп'.format(para))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
@@ -349,7 +353,7 @@ class Indicater:
     def cci(self, df:  'pandas.core.frame.DataFrame') -> 'pandas.core.frame.DataFrame':
         df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
         # По 10 свечам определяем восходящий или низходящий тренд
-        chandles = 9
+        chandles = 6
         s = [0] * len(df)
         signal = [0] * len(df)
         for i in range(len(df)):
