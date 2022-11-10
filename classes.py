@@ -52,6 +52,9 @@ class AG():
 
         return self.future.get_position(settle=conf.base_currency, contract=contract)
 
+    def list_position(self):
+        return self.future.list_positions(settle=conf.base_currency)
+
     # получаем список последних свечей по контракту
     def list_futures_candlesticks(self, contract, interval=conf.tf, limit=500):
         '''
@@ -158,7 +161,7 @@ class Bot:
 
     # Белый список торговых пар
     def whait_list(self):
-        wait_l = ['SAND_USDT', 'DYDX_USDT']  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
+        wait_l = ['SAND_USDT', 'DYDX_USDT', 'DOGE_USDT']  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
         return wait_l
 
     # Создаём необходимый датафрейм
