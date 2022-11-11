@@ -326,7 +326,7 @@ class Bot:
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
-            print(s)
+            # print(s)
             if 0 < orders <= 5:
                 data = []
             elif 5 < orders:
