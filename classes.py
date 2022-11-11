@@ -9,7 +9,7 @@ import pandas as pd
 import pandas_ta as ta
 import gate_api
 # from gate_api.exceptions import ApiException, GateApiException
-# from decimal import Decimal, ROUND_FLOOR
+from decimal import Decimal, ROUND_FLOOR
 
 
 class AG:
@@ -172,9 +172,13 @@ class Bot:
         """
         :return:
         """
-        # 'FTT_USDT',
-        # 'DOGE_USDT',
-        wait_l = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT']
+        #
+        #
+        #
+        #
+        #
+        wait_l = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT', 'FTT_USDT', 'DOGE_USDT',
+                  'XRP_USDT']
         return wait_l
 
     # Создаём необходимый датафрейм
@@ -304,11 +308,15 @@ class Bot:
                              + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
+        navar_price = Decimal(navar_price)
+        navar_price = navar_price.quantize(Decimal(data[-1]['price']))
+        mimo_price = Decimal(mimo_price)
+        mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
         Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
                     .format(para, ordr, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
-        if navar_price < df.Close[-1]:
+        if float(navar_price) < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=gen_size)
             if 0 < orders <= conf.interval_1:
                 data = []
@@ -348,7 +356,7 @@ class Bot:
         """
         k = False
         data = Bot().read_json(para)
-        print(data)
+        print(len(data))
         orders = len(data)
         ordr = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
@@ -376,6 +384,10 @@ class Bot:
                              + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
+        navar_price = Decimal(navar_price)
+        navar_price = navar_price.quantize(Decimal(data[-1]['price']))
+        mimo_price = Decimal(mimo_price)
+        mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
         Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
                     .format(para, ordr, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
@@ -456,8 +468,8 @@ class Indicater:
         :return:
         """
         df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
-        # По 10 свечам определяем восходящий или низходящий тренд
-        chandles = 6
+        # По 5 свечам определяем восходящий или низходящий тренд
+        chandles = 4
         s = [0] * len(df)
         signal = [0] * len(df)
         for i in range(len(df)):
