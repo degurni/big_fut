@@ -8,8 +8,8 @@ import json
 import pandas as pd
 import pandas_ta as ta
 import gate_api
-from gate_api.exceptions import ApiException, GateApiException
-from decimal import Decimal, ROUND_FLOOR
+# from gate_api.exceptions import ApiException, GateApiException
+# from decimal import Decimal, ROUND_FLOOR
 
 class AG():
     def __init__(self):
@@ -391,7 +391,7 @@ class Indicater:
     def __init__(self):
         pass
 
-    def cci(self, df:  'pandas.core.frame.DataFrame') -> 'pandas.core.frame.DataFrame':
+    def cci(self, df):
         df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
         # По 10 свечам определяем восходящий или низходящий тренд
         chandles = 6
