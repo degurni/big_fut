@@ -44,7 +44,7 @@ while True:
                 except ValueError:
                     data = []
                 finally:
-                    if data == []:  # если файл пустой или в нём пустой список
+                    if data == [] and poz.size != 0:  # если файл пустой или в нём пустой список
                         inf = {'id': '',
                            'contract': poz.contract,
                            'size': poz.size,
