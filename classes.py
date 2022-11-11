@@ -158,7 +158,7 @@ class Bot:
 
     # Белый список торговых пар
     def whait_list(self):
-        wait_l = ['SAND_USDT', 'DYDX_USDT', 'DOGE_USDT',]  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
+        wait_l = ['FTT_USDT', 'SAND_USDT', 'DYDX_USDT', 'DOGE_USDT', 'ADA_USDT']  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
         return wait_l
 
     # Создаём необходимый датафрейм
@@ -278,7 +278,7 @@ class Bot:
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
             # print(s)
-            Bot().debug('debug', '{} : добавляем {} по цене {}'.format(para, s.size, s.fill_price))
+            Bot().debug('debug', '{} : добавляем {} контрактов по цене {}'.format(para, s.size, s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
@@ -324,6 +324,7 @@ class Bot:
                     .format(para, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
+        print(gen_size)
         if navar_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
             # print(s)
@@ -336,7 +337,7 @@ class Bot:
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             # print(s)
-            Bot().debug('debug', '{} : добавляем {} по цене {}'.format(para, abs(s.size), s.fill_price))
+            Bot().debug('debug', '{} : добавляем {} контрактов по цене {}'.format(para, abs(s.size), s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
