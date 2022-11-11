@@ -66,4 +66,4 @@ while True:
                 kol_poz -= 1
 
     print('=' * 75)
-    time.sleep(15)
+    time.sleep(conf.sleep)
