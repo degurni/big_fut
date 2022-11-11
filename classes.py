@@ -363,25 +363,33 @@ class Bot:
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
         average_price = None  # средняя цена входа закрываемых ордеров
+
         if 0 < orders <= conf.interval_1:  # если исполненных ордеров от 1 до 4 то закрываем все в профит
             for i in data:
-                gen_size += int(i['size'])
-                sum_price += float(i['price'])
+                gen_size += int(i['size'])  # сколько контрактов на продажу
+                sum_price += float(i['price'])  # средняя цена покупки этих контрактов
             average_price = sum_price / len(data)
+
         elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
             orders = 2
-            gen_size = float(data[-1]['size']) + float(data[0]['size'])
-            average_price = (float(data[0]['price']) + float(data[-1]['price'])) / orders
+            gen_size = float(data[-1]['size']) + float(data[0]['size'])  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) +
+                             float(data[-1]['price'])) / orders  # средняя цена покупки этих контрактов
+
         elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
             orders = 3
-            gen_size = float(data[-1]['size']) + float(data[-2]['size']) + float(data[0]['size'])
-            average_price = (float(data[0]['price']) + float(data[-2]['price']) + float(data[-1]['price'])) / orders
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[0]['size']))  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) + float(data[-2]['price'])
+                             + float(data[-1]['price'])) / orders  # средняя цена покупки этих контрактов
+
         elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
             orders = 4
             gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
-                        + float(data[-3]['size']) + float(data[0]['size']))
-            average_price = (float(data[0]['price']) + float(data[-3]['price'])
-                             + float(data[-2]['price']) + float(data[-1]['price'])) / orders
+                        + float(data[-3]['size']) + float(data[0]['size']))  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) + float(data[-3]['price']) + float(data[-2]['price'])
+                             + float(data[-1]['price'])) / orders  # средняя цена покупки этих контрактов
+
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
         navar_price = Decimal(navar_price)
@@ -393,6 +401,7 @@ class Bot:
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
+            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
             s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
             # print(s)
             if 0 < orders <= conf.interval_1:
@@ -409,6 +418,8 @@ class Bot:
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
+            Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
+            print(data)
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             # print(s)
