@@ -269,9 +269,17 @@ class Bot:
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=gen_size)
-            if 0 < orders <= 5:
+            if 0 < orders <= conf.interval_1:
                 data = []
-            elif 5 < orders:
+            elif conf.interval_2 < orders <= conf.interval_3:
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_2 < orders <= conf.interval_3:
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_3 < orders:
+                data.pop(-1)
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
@@ -324,13 +332,20 @@ class Bot:
                     .format(para, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
-        print(gen_size)
         if navar_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
             # print(s)
-            if 0 < orders <= 5:
+            if 0 < orders <= conf.interval_1:
                 data = []
-            elif 5 < orders:
+            elif conf.interval_2 < orders <= conf.interval_3:
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_2 < orders <= conf.interval_3:
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_3 < orders:
+                data.pop(-1)
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
