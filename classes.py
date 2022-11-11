@@ -238,6 +238,7 @@ class Bot:
         k = False
         data = Bot().read_json(para)
         orders = len(data)
+        ord = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
@@ -263,8 +264,8 @@ class Bot:
                              + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
-        Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
-                    .format(para, orders, navar_price, mimo_price))
+        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
+                    .format(para, ord, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price < df.Close[-1]:
@@ -303,6 +304,7 @@ class Bot:
         k = False
         data = Bot().read_json(para)
         orders = len(data)
+        ord = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
@@ -328,8 +330,8 @@ class Bot:
                              + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
-        Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
-                    .format(para, orders, navar_price, mimo_price))
+        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
+                    .format(para, ord, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
