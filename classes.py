@@ -1,15 +1,12 @@
 
 
 import conf
+
 import datetime
 import os
 import json
-import requests
-import gzip
 import pandas as pd
 import pandas_ta as ta
-import numpy as np
-import plotly.graph_objects as go
 import gate_api
 from gate_api.exceptions import ApiException, GateApiException
 from decimal import Decimal, ROUND_FLOOR
@@ -230,7 +227,7 @@ class Bot:
                'price': s.fill_price,
                'tkfr': s.tkfr}
         data = []
-        if os.path.isfile('{}.json'.format(s.contract)):
+        if os.path.isfile('stock/{}.json'.format(s.contract)):
             data = Bot().read_json(s.contract)
         data.append(inf)
         Bot().write_json(data, s.contract)
@@ -245,17 +242,25 @@ class Bot:
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
         average_price = None  # средняя цена входа закрываемых ордеров
-        if 0 < orders <= 5:  # если исполненных ордеров от 1 до 5 то закрываем все в профит
+        if 0 < orders <= conf.interval_1:  # если исполненных ордеров от 1 до 4 то закрываем все в профит
             for i in data:
                 gen_size += int(i['size'])
                 sum_price += float(i['price'])
             average_price = sum_price / orders
-
-        elif 5 < orders:
+        elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
+            orders = 2
+            gen_size = float(data[-1]['size']) + float(data[0]['size'])
+            average_price = (float(data[0]['price']) + float(data[-1]['price'])) / orders
+        elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
             orders = 3
             gen_size = float(data[-1]['size']) + float(data[-2]['size']) + float(data[0]['size'])
             average_price = (float(data[0]['price']) + float(data[-2]['price']) + float(data[-1]['price'])) / orders
-
+        elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+            orders = 4
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[-3]['size']) + float(data[0]['size']))
+            average_price = (float(data[0]['price']) + float(data[-3]['price'])
+                             + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
         Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
@@ -294,15 +299,25 @@ class Bot:
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
         average_price = None  # средняя цена входа закрываемых ордеров
-        if 0 < orders <= 5:  # если исполненных ордеров от 1 до 5 то закрываем все в профит
+        if 0 < orders <= conf.interval_1:  # если исполненных ордеров от 1 до 4 то закрываем все в профит
             for i in data:
                 gen_size += int(i['size'])
                 sum_price += float(i['price'])
             average_price = sum_price / len(data)
-        elif 5 < orders:
+        elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
+            orders = 2
+            gen_size = float(data[-1]['size']) + float(data[0]['size'])
+            average_price = (float(data[0]['price']) + float(data[-1]['price'])) / orders
+        elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
             orders = 3
             gen_size = float(data[-1]['size']) + float(data[-2]['size']) + float(data[0]['size'])
             average_price = (float(data[0]['price']) + float(data[-2]['price']) + float(data[-1]['price'])) / orders
+        elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+            orders = 4
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[-3]['size']) + float(data[0]['size']))
+            average_price = (float(data[0]['price']) + float(data[-3]['price'])
+                             + float(data[-2]['price']) + float(data[-1]['price'])) / orders
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
         Bot().debug('debug', '{}: Заказов {}, TP - {}, DZ - {}'
@@ -341,7 +356,7 @@ class Bot:
 
     def read_json(self, para):
         try:
-            with open('{}.json'.format(para)) as f:
+            with open('stock/{}.json'.format(para)) as f:
                 data = json.load(f)
         except FileNotFoundError:
             Bot().write_json(data=[], para=para)
@@ -349,7 +364,7 @@ class Bot:
             return data
 
     def write_json(self, data, para):
-        with open('{}.json'.format(para), 'w') as f:
+        with open('stock/{}.json'.format(para), 'w') as f:
             json.dump(data, f, indent=2)
 
 
