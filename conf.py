@@ -35,3 +35,142 @@ mimo_short = 1 + (mimo / 100)   #   #
 настройка CCI <classe.py><Indicater.cci>
  
 '''
+#dydx
+[
+  {
+    "id": "",
+    "contract": "DYDX_USDT",
+    "size": 0,
+    "price": "0",
+    "tkfr": ""
+  },
+  {
+    "id": 221255967035,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.748",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221282399630,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.76",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221285879413,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.765",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221286243036,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.772",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221295270514,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.783",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221297743693,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.801",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221298801539,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.806",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221299085757,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.843",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221313396983,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.86",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221313670550,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.869",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221316134276,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.889",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221317138284,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.892",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221318933759,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.914",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221319207246,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.926",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221319566784,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.933",
+    "tkfr": "0.0005"
+  },
+  {
+    "id": 221321824259,
+    "contract": "DYDX_USDT",
+    "size": -57,
+    "price": "1.941",
+    "tkfr": "0.0005"
+  }
+]
+#sand
+[
+  {
+    "id": "",
+    "contract": "SAND_USDT",
+    "size": 0,
+    "price": "0",
+    "tkfr": ""
+  },
+  {
+    "id": 221323920465,
+    "contract": "SAND_USDT",
+    "size": -15,
+    "price": "0.6751",
+    "tkfr": "0.0005"
+  }
+]
