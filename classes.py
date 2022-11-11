@@ -54,7 +54,6 @@ class AG:
 
     def list_position(self):
         """
-
         :return:
         """
         return self.future.list_positions(settle=conf.base_currency)
@@ -171,10 +170,11 @@ class Bot:
     # Белый список торговых пар
     def whait_list(self):
         """
-
         :return:
         """
-        wait_l = ['FTT_USDT', 'SAND_USDT', 'DYDX_USDT', 'DOGE_USDT', 'ADA_USDT']
+        # 'FTT_USDT',
+        # 'DOGE_USDT',
+        wait_l = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT']
         return wait_l
 
     # Создаём необходимый датафрейм
@@ -196,7 +196,6 @@ class Bot:
     # преобразуем список в ДатаФрейм
     def frame(self, data):
         """
-
         :param data:
         :return:
         """
@@ -221,7 +220,6 @@ class Bot:
 
     def debug(self, var, inf):
         """
-
         :param var:
         :param inf:
         :return:
@@ -252,7 +250,6 @@ class Bot:
     # Заходим в позицию или создаё дополнительный заказ по рынку . заносим данные заказа в файл
     def create_poz_big(self, par, side):
         """
-
         :param par:
         :param side:
         :return:
@@ -274,7 +271,6 @@ class Bot:
     # проверяем профит LONG-позиции
     def check_profit_long(self, df, para):
         """
-
         :param df:
         :param para:
         :return:
@@ -346,13 +342,13 @@ class Bot:
     # проверяем профит SHORT-позиции
     def check_profit_short(self, df, para):
         """
-
         :param df:
         :param para:
         :return:
         """
         k = False
         data = Bot().read_json(para)
+        print(data)
         orders = len(data)
         ordr = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
@@ -389,14 +385,14 @@ class Bot:
             # print(s)
             if 0 < orders <= conf.interval_1:
                 data = []
-            elif conf.interval_2 < orders <= conf.interval_3:
+            elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 5 до 9 то закрываем 2
                 data.pop(-1)
                 data.pop(0)
-            elif conf.interval_2 < orders <= conf.interval_3:
+            elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
-            elif conf.interval_3 < orders:
+            elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(-1)
@@ -419,7 +415,6 @@ class Bot:
     # Высчитываем сколько контрактов на указанную сумму
     def usdt_contract(self, contract):
         """
-
         :param contract:
         :return:
         """
@@ -429,7 +424,6 @@ class Bot:
 
     def read_json(self, para):
         """
-
         :param para:
         :return:
         """
@@ -443,7 +437,6 @@ class Bot:
 
     def write_json(self, data, para):
         """
-
         :param data:
         :param para:
         :return:
@@ -459,7 +452,6 @@ class Indicater:
 
     def cci(self, df):
         """
-
         :param df:
         :return:
         """
