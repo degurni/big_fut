@@ -11,14 +11,17 @@ import gate_api
 # from gate_api.exceptions import ApiException, GateApiException
 # from decimal import Decimal, ROUND_FLOOR
 
-class AG():
+
+class AG:
     def __init__(self):
         self.config = gate_api.Configuration(key=conf.key, secret=conf.secret)
         self.client = gate_api.ApiClient(self.config)
         self.future = gate_api.FuturesApi(self.client)
 
     def get_position(self, contract):
-        '''
+        """
+        :param contract:
+        :return:
         получить позицию по определённому контракту
         https://github.com/gateio/gateapi-python/blob/master/docs/FuturesApi.md#get_position
         :return:
@@ -45,16 +48,24 @@ class AG():
          'unrealised_pnl': '0.0186',
          'user': 4084077,
          'value': '6.6604'}                  стоимость позиции
-        '''
+        """
 
         return self.future.get_position(settle=conf.base_currency, contract=contract)
 
     def list_position(self):
+        """
+
+        :return:
+        """
         return self.future.list_positions(settle=conf.base_currency)
 
     # получаем список последних свечей по контракту
     def list_futures_candlesticks(self, contract, interval=conf.tf, limit=500):
-        '''
+        """
+        :param contract:
+        :param interval:
+        :param limit:
+        :return:
         Получаем список свечей
         https://github.com/gateio/gateapi-python/blob/master/docs/FuturesApi.md#list_futures_candlesticks
         :param contract: торговая пара ('ADA_USDT')
@@ -65,13 +76,13 @@ class AG():
                 'o': '0.34861',
                 't': 1666227600.0,
                 'v': 13666
-        '''
+        """
         return self.future.list_futures_candlesticks(settle=conf.base_currency, contract=contract,
                                                      limit=limit, interval=interval)
 
     # Получаем информацию об конкретном контракте
     def get_futures_contract(self, contract):
-        '''
+        """
         Получаем информацию об конкретном контракте
         https://github.com/gateio/gateapi-python/blob/master/docs/FuturesApi.md#get_futures_contract
         :param contract:
@@ -108,15 +119,17 @@ class AG():
          'trade_id': 5779215,
          'trade_size': 4027559888,
          'type': 'direct'}
-        '''
+        """
         return self.future.get_futures_contract(settle=conf.base_currency, contract=contract)
 
     # Выставляем ордер по рынку
     def create_futures_order(self, side, contract, size):
-        '''
+        """
             Создать фьючерсный ордер
             https://github.com/gateio/gateapi-python/blob/master/docs/FuturesApi.md#create_futures_order
             :param side:
+            :param contract:
+            :param size:
             :return:
             {'auto_size': None,
              'close': False,
@@ -141,7 +154,7 @@ class AG():
              'tif': 'ioc',
              'tkfr': '0.0005',
              'user': 4084077}
-        '''
+        """
         if side == 'short':
             size = -1 * size
         futures_order = {'contract': contract,
@@ -151,18 +164,26 @@ class AG():
         return self.future.create_futures_order(settle=conf.base_currency, futures_order=futures_order)
 
 
-
 class Bot:
     def __init__(self):
         pass
 
     # Белый список торговых пар
     def whait_list(self):
-        wait_l = ['FTT_USDT', 'SAND_USDT', 'DYDX_USDT', 'DOGE_USDT', 'ADA_USDT']  # , 'SOL_USDT' , 'SAND_USDT', 'DYDX_USDT'
+        """
+
+        :return:
+        """
+        wait_l = ['FTT_USDT', 'SAND_USDT', 'DYDX_USDT', 'DOGE_USDT', 'ADA_USDT']
         return wait_l
 
     # Создаём необходимый датафрейм
     def create_df(self, para):
+        """
+
+        :param para:
+        :return:
+        """
         # получаем список последних свечей по контракту
         data = AG().list_futures_candlesticks(contract=para)
         # преобразуем список в ДатаФрейм
@@ -174,6 +195,11 @@ class Bot:
 
     # преобразуем список в ДатаФрейм
     def frame(self, data):
+        """
+
+        :param data:
+        :return:
+        """
         t = []
         c = []
         h = []
@@ -194,6 +220,12 @@ class Bot:
         return df
 
     def debug(self, var, inf):
+        """
+
+        :param var:
+        :param inf:
+        :return:
+        """
         time = self.tm() if var == 'debug' else None
         if conf.debug == 'inform':
             if var == 'inform':
@@ -219,6 +251,12 @@ class Bot:
 
     # Заходим в позицию или создаё дополнительный заказ по рынку . заносим данные заказа в файл
     def create_poz_big(self, par, side):
+        """
+
+        :param par:
+        :param side:
+        :return:
+        """
         size = Bot().usdt_contract(contract=par)
         s = AG().create_futures_order(side=side, contract=par, size=size)  # открываем позицию
         inf = {'id': s.id,
@@ -235,10 +273,16 @@ class Bot:
 
     # проверяем профит LONG-позиции
     def check_profit_long(self, df, para):
+        """
+
+        :param df:
+        :param para:
+        :return:
+        """
         k = False
         data = Bot().read_json(para)
         orders = len(data)
-        ord = len(data)
+        ordr = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
@@ -265,7 +309,7 @@ class Bot:
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
         Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
-                    .format(para, ord, orders, navar_price, mimo_price))
+                    .format(para, ordr, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price < df.Close[-1]:
@@ -301,10 +345,16 @@ class Bot:
 
     # проверяем профит SHORT-позиции
     def check_profit_short(self, df, para):
+        """
+
+        :param df:
+        :param para:
+        :return:
+        """
         k = False
         data = Bot().read_json(para)
         orders = len(data)
-        ord = len(data)
+        ordr = len(data)
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
         gen_size = 0  # количество контрактов в ордер
         sum_price = 0  # общая цена в закрываемых ордерах
@@ -331,7 +381,7 @@ class Bot:
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
         Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
-                    .format(para, ord, orders, navar_price, mimo_price))
+                    .format(para, ordr, orders, navar_price, mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
@@ -368,11 +418,21 @@ class Bot:
 
     # Высчитываем сколько контрактов на указанную сумму
     def usdt_contract(self, contract):
+        """
+
+        :param contract:
+        :return:
+        """
         data = AG().get_futures_contract(contract=contract)
         k = conf.size_usdt / float(data.mark_price) / float(data.quanto_multiplier) * float(data.leverage_max)
         return round(k)
 
     def read_json(self, para):
+        """
+
+        :param para:
+        :return:
+        """
         try:
             with open('stock/{}.json'.format(para)) as f:
                 data = json.load(f)
@@ -382,6 +442,12 @@ class Bot:
             return data
 
     def write_json(self, data, para):
+        """
+
+        :param data:
+        :param para:
+        :return:
+        """
         with open('stock/{}.json'.format(para), 'w') as f:
             json.dump(data, f, indent=2)
 
@@ -392,6 +458,11 @@ class Indicater:
         pass
 
     def cci(self, df):
+        """
+
+        :param df:
+        :return:
+        """
         df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
         # По 10 свечам определяем восходящий или низходящий тренд
         chandles = 6
