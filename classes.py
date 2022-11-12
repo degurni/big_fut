@@ -319,11 +319,12 @@ class Bot:
         navar_price = navar_price.quantize(Decimal(data[-1]['price']))
         mimo_price = Decimal(mimo_price)
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
-        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
-                    .format(para, ordr, orders, navar_price, mimo_price))
+        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+                    .format(para, ordr, orders, navar_price, df.Close[-1], mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if float(navar_price) < df.Close[-1]:
+            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
             s = AG().create_futures_order(side='short', contract=para, size=gen_size)
             if 0 < orders <= conf.interval_1:
                 data = []
@@ -339,6 +340,7 @@ class Bot:
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
+            Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
             # print(s)
@@ -403,8 +405,8 @@ class Bot:
         navar_price = navar_price.quantize(Decimal(data[-1]['price']))
         mimo_price = Decimal(mimo_price)
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
-        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, DZ - {}'
-                    .format(para, ordr, orders, navar_price, mimo_price))
+        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+                    .format(para, ordr, orders, navar_price, df.Close[-1], mimo_price))
         # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:

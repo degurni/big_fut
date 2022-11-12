@@ -13,7 +13,7 @@ sleep = 15  # секунд
 base_currency = 'usdt'  # Название базовой монеты('usdt')
 tf = '5m'
 
-whait_list = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT', 'DOGE_USDT',
+whait_list = ['DYDX_USDT', 'SAND_USDT', 'ADA_USDT', 'DOGE_USDT',
               'XRP_USDT', 'BTC_USDT']
 
 # Размер позиции в USDT (примерно)
