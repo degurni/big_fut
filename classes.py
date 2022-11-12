@@ -320,7 +320,7 @@ class Bot:
             s = AG().create_futures_order(side='short', contract=para, size=gen_size)
             if 0 < orders <= conf.interval_1:
                 data = []
-            elif conf.interval_2 < orders <= conf.interval_3:
+            elif conf.interval_1 < orders <= conf.interval_2:
                 data.pop(-1)
                 data.pop(0)
             elif conf.interval_2 < orders <= conf.interval_3:
