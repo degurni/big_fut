@@ -24,10 +24,9 @@ for i in poz_list:
         if os.path.isfile('stock/{}.json'.format(i.contract)):
             bot.write_json([], i.contract)
 
-data = []
 
 while True:
-    if kol_poz >= conf.max_poz:
+    if kol_poz <= conf.max_poz:
         for para in paras:
             poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
             if poz.size > 0:  # если уже открыта LONG-позиция
@@ -40,9 +39,9 @@ while True:
                 t = bot.check_profit_short(df=df, para=para)
                 if t:
                     kol_poz -= 1
-    elif kol_poz < conf.max_poz:
+    if kol_poz < conf.max_poz:
         for para in paras:
-            if kol_poz < conf.max_poz:
+            if kol_poz >= conf.max_poz:
                 break
             poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
             if poz.size == 0:
@@ -63,4 +62,3 @@ while True:
 
     print('=' * 75)
     time.sleep(conf.sleep)
-
