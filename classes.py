@@ -1,6 +1,7 @@
 
 
 import conf
+import keys
 
 import datetime
 import os
@@ -11,10 +12,16 @@ import gate_api
 # from gate_api.exceptions import ApiException, GateApiException
 from decimal import Decimal, ROUND_FLOOR
 
+if os.path.isfile('keys.py'):
+    key = keys.key
+    secret = keys.secret
+else:
+    key = conf.key
+    secret = conf.secret
 
 class AG:
     def __init__(self):
-        self.config = gate_api.Configuration(key=conf.key, secret=conf.secret)
+        self.config = gate_api.Configuration(key=key, secret=secret)
         self.client = gate_api.ApiClient(self.config)
         self.future = gate_api.FuturesApi(self.client)
 

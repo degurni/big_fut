@@ -2,8 +2,9 @@
 
 # Подключение к API биржи Gate.io
 
-key = '605b74869f0a70931b55e349d5fe5ca2'
-secret = '8e8ca04649ba3e0ed9cd7efb635565b7659328453c111921fd4fff0ad509dbde'
+key = ''
+secret = ''
+
 
 debug = 'debug'
 # пауза между циклами бота
