@@ -26,13 +26,13 @@ while True:
             bot.debug('debug', '{}: Позиция ещё не открыта'.format(para))
             # print('CCI_1_9 - {} : CCI_1 - {}'.format(df.CCI[-10:-1].mean(), df.CCI[-1]))
             if df.sigCCI[-1] == 1:  # если получен сигнал на LONG
-                bot.debug('debug', '{}: Точка входа в LONG'.format(para))
+                bot.debug('inform', '{}: Точка входа в LONG'.format(para))
                 # Заходим в позицию по рынку . заносим данные заказа в файл
                 t = bot.create_poz_big(par=para, side='long')
                 if t:
                     kol_poz += 1
             elif df.sigCCI[-1] == -1:  # если получен сигнал на SHORT
-                bot.debug('debug', '{}: Точка входа в SHORT'.format(para))
+                bot.debug('inform', '{}: Точка входа в SHORT'.format(para))
                 # Заходим в позицию по рынку . заносим данные заказа в файл
                 t = bot.create_poz_big(par=para, side='short')
                 if t:
