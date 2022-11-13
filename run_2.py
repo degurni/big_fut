@@ -30,6 +30,26 @@ def big_fut():
 
     while True:
         try:
+            if kol_poz < conf.max_poz:
+                for para in paras:
+                    if kol_poz >= conf.max_poz:
+                        break
+                    poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
+                    if poz.size == 0:
+                        bot.debug('debug', '{}: Позиция ещё не открыта'.format(para))
+                        df = bot.create_df(para=para)  # создаём датафрейм с последними свечами и сигналами индикаторов
+                        if df.sigCCI[-1] == 1:  # если получен сигнал на LONG
+                            bot.debug('inform', '{}: Точка входа в LONG'.format(para))
+                            # Заходим в позицию по рынку . заносим данные заказа в файл
+                            t = bot.create_poz_big(par=para, side='long')
+                            if t:
+                                kol_poz += 1
+                        elif df.sigCCI[-1] == -1:  # если получен сигнал на SHORT
+                            bot.debug('inform', '{}: Точка входа в SHORT'.format(para))
+                            # Заходим в позицию по рынку . заносим данные заказа в файл
+                            t = bot.create_poz_big(par=para, side='short')
+                            if t:
+                                kol_poz += 1
             if kol_poz <= conf.max_poz:
                 for para in paras:
                     poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
@@ -43,26 +63,7 @@ def big_fut():
                         t = bot.check_profit_short(df=df, para=para)
                         if t:
                             kol_poz -= 1
-            elif kol_poz < conf.max_poz:
-                for para in paras:
-                    if kol_poz >= conf.max_poz:
-                        break
-                    poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
-                    if poz.size == 0:
-                        bot.debug('debug', '{}: Позиция ещё не открыта'.format(para))
-                        df = bot.create_df(para=para)  # создаём датафрейм с последними свечами и сигналами индикаторов
-                        if df.sigCCI[-1] == 1:  # если получен сигнал на LONG
-                            bot.debug('debug', '{}: Точка входа в LONG'.format(para))
-                            # Заходим в позицию по рынку . заносим данные заказа в файл
-                            t = bot.create_poz_big(par=para, side='long')
-                            if t:
-                                kol_poz += 1
-                        elif df.sigCCI[-1] == -1:  # если получен сигнал на SHORT
-                            bot.debug('debug', '{}: Точка входа в SHORT'.format(para))
-                            # Заходим в позицию по рынку . заносим данные заказа в файл
-                            t = bot.create_poz_big(par=para, side='short')
-                            if t:
-                                kol_poz += 1
+
 
             print('=' * 75)
             time.sleep(conf.sleep)

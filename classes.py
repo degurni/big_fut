@@ -344,7 +344,7 @@ class Bot:
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
             # print(s)
-            Bot().debug('debug', '{} : добавляем {} контрактов по цене {}'.format(para, s.size, s.fill_price))
+            Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, s.size, s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
