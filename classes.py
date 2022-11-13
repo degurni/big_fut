@@ -175,18 +175,18 @@ class Bot:
         pass
 
     # Белый список торговых пар
-    def whait_list(self):
-        """
-        :return:
-        """
-        #
-        #
-        #
-        #
-        #
-        wait_l = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT', 'FTT_USDT', 'DOGE_USDT',
-                  'XRP_USDT']
-        return wait_l
+    # def whait_list(self):
+    #     """
+    #     :return:
+    #     """
+    #     #
+    #     #
+    #     #
+    #     #
+    #     #
+    #     wait_l = ['SAND_USDT', 'DYDX_USDT', 'ADA_USDT', 'FTT_USDT', 'DOGE_USDT',
+    #               'XRP_USDT']
+    #     return wait_l
 
     # Создаём необходимый датафрейм
     def create_df(self, para):
@@ -432,7 +432,7 @@ class Bot:
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             # print(s)
-            Bot().debug('debug', '{} : добавляем {} контрактов по цене {}'.format(para, abs(s.size), s.fill_price))
+            Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, abs(s.size), s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
                    'size': s.size,
