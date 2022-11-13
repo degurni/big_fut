@@ -43,7 +43,7 @@ def big_fut():
                         t = bot.check_profit_short(df=df, para=para)
                         if t:
                             kol_poz -= 1
-            if kol_poz < conf.max_poz:
+            elif kol_poz < conf.max_poz:
                 for para in paras:
                     if kol_poz >= conf.max_poz:
                         break
