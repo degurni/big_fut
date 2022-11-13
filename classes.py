@@ -10,7 +10,7 @@ import pandas as pd
 import pandas_ta as ta
 import gate_api
 # from gate_api.exceptions import ApiException, GateApiException
-from decimal import Decimal, ROUND_FLOOR
+from decimal import Decimal
 
 if os.path.isfile('keys.py'):
     key = keys.key
@@ -18,6 +18,7 @@ if os.path.isfile('keys.py'):
 else:
     key = conf.key
     secret = conf.secret
+
 
 class AG:
     def __init__(self):
@@ -210,20 +211,20 @@ class Bot:
         :param data:
         :return:
         """
-        t = []
-        c = []
-        h = []
-        l = []
-        o = []
-        v = []
+        tm = []
+        close = []
+        high = []
+        low = []
+        opn = []
+        vol = []
         for i in data:
-            t.append(int(i.t))
-            c.append(float(i.c))
-            h.append(float(i.h))
-            l.append(float(i.l))
-            o.append(float(i.o))
-            v.append(float(i.v))
-        df = pd.DataFrame({'Time': t, 'Close': c, 'High': h, 'Low': l, 'Open': o, 'Volume': v})
+            tm.append(int(i.t))
+            close.append(float(i.c))
+            high.append(float(i.h))
+            low.append(float(i.l))
+            opn.append(float(i.o))
+            vol.append(float(i.v))
+        df = pd.DataFrame({'Time': tm, 'Close': close, 'High': high, 'Low': low, 'Open': opn, 'Volume': vol})
         df['Time'] = pd.to_datetime(df.Time, unit='s')
         df.set_index('Time', inplace=True)
         df = df[df.High != df.Low]
@@ -325,7 +326,7 @@ class Bot:
         #             .format(para, navar_price, mimo_price, orders))
         if float(navar_price) < df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
-            s = AG().create_futures_order(side='short', contract=para, size=gen_size)
+            AG().create_futures_order(side='short', contract=para, size=gen_size)
             if 0 < orders <= conf.interval_1:
                 data = []
             elif conf.interval_1 < orders <= conf.interval_2:
@@ -343,7 +344,6 @@ class Bot:
             Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
         elif mimo_price > df.Close[-1]:
             s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
-            # print(s)
             Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, s.size, s.fill_price))
             inf = {'id': s.id,
                    'contract': s.contract,
@@ -411,11 +411,10 @@ class Bot:
         #             .format(para, navar_price, mimo_price, orders))
         if navar_price > df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
-            s = AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
-            # print(s)
+            AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
             if 0 < orders <= conf.interval_1:
                 data = []
-            elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 5 до 9 то закрываем 2
+            elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
                 data.pop(-1)
                 data.pop(0)
             elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
