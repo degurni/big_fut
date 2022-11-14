@@ -5,14 +5,18 @@ from classes import AG, Bot, Indicater
 import time
 import os
 import sys
-
+from datetime import datetime
 
 ag = AG()
 bot = Bot()
 idr = Indicater()
 
 
+
+
 def big_fut():
+    max_zakaz = 0
+    start_time = datetime.now()
     paras = conf.whait_list
     # Проверяем наличие вспомогательных файлов
     for i in paras:
@@ -50,7 +54,8 @@ def big_fut():
                             t = bot.create_poz_big(par=para, side='short')
                             if t:
                                 kol_poz += 1
-            if kol_poz <= conf.max_poz:
+
+            if kol_poz:
                 for para in paras:
                     poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
                     if poz.size > 0:  # если уже открыта LONG-позиция
@@ -64,8 +69,15 @@ def big_fut():
                         if t:
                             kol_poz -= 1
 
-
             print('=' * 75)
+            for para in paras:
+                data = bot.read_json(para)
+                if max_zakaz < len(data):
+                    max_zakaz = len(data)
+            new_time = datetime.now() - start_time
+            nt = ((str(new_time)).split('.'))[0]
+            print('Бот в работе - {} : MAX заказов - {}'.format(nt, max_zakaz))
+
             time.sleep(conf.sleep)
         except KeyboardInterrupt:
             bot.debug('inform', 'Работа бота завершена')
