@@ -86,5 +86,4 @@ def big_fut():
 
 
 if __name__ == '__main__':
-    # ok
     big_fut()

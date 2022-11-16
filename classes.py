@@ -321,10 +321,9 @@ class Bot:
         navar_price = navar_price.quantize(Decimal(data[-1]['price']))
         mimo_price = Decimal(mimo_price)
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
-        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
-                    .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
-        # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
-        #             .format(para, navar_price, mimo_price, orders))
+        # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+        #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
+        Bot().progress(para, orders, ords, navar_price, df.Close[-1], mimo_price)
         if float(navar_price) < df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
             AG().create_futures_order(side='short', contract=para, size=gen_size)
@@ -366,7 +365,6 @@ class Bot:
         """
         k = False
         data = Bot().read_json(para)
-        print(len(data))
         orders = len(data)
         ords = 0
         # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
@@ -407,34 +405,32 @@ class Bot:
         navar_price = navar_price.quantize(Decimal(data[-1]['price']))
         mimo_price = Decimal(mimo_price)
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
-        Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
-                    .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
-        # Bot().debug('debug', '{}: Профит - {}, Закуп - {}, Серия - {}'
-        #             .format(para, navar_price, mimo_price, orders))
+        # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+        #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
+        Bot().progress(para, orders, ords, navar_price, df.Close[-1], mimo_price)
         if navar_price > df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
             AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
-            print('415 orders - {}'.format(orders))
+            # print('415 orders - {}'.format(orders))
             if 0 < orders <= conf.interval_1:
                 data = []
-                print('418 len_data - {}'.format(len(data)))
+                # print('418 len_data - {}'.format(len(data)))
             elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
                 data.pop(-1)
                 data.pop(0)
-                print('422 len_data - {}'.format(len(data)))
+                # print('422 len_data - {}'.format(len(data)))
             elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
-                print('427 len_data - {}'.format(len(data)))
+                # print('427 len_data - {}'.format(len(data)))
             elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(0)
-                print('433 len_data - {}'.format(len(data)))
+                # print('433 len_data - {}'.format(len(data)))
             Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
-            print(data)
         elif mimo_price < df.Close[-1]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             # print(s)
@@ -449,6 +445,28 @@ class Bot:
             k = True
         Bot().write_json(data=data, para=para)
         return k
+
+    def progress(self, para, orders, ords, navar_price, price_close, mimo_price):
+        kr = '\033[31m\033[41m'
+        gr_1 = '\033[32m'
+        gr_2 = '\033[32m\033[42m'
+        sbros = '\033[0m'
+        pruf = 20
+        navar_price = float(navar_price)
+        mimo_price = float(mimo_price)
+        delen = abs((navar_price - mimo_price) / pruf)
+        lev = round(abs((navar_price - price_close) / delen))
+        prav = pruf - lev
+        z = ' '
+        time = self.tm()
+        # print('{}{} - {}: Заказов {}/{}, {} {}{}{}{}{}{} {}{}'.format(
+        #     gr_1, time, para, orders, ords, navar_price, gr_2, z * lev, kr, z * prav, sbros, gr_1, mimo_price, sbros))
+        print()
+        print('{}{} - {}: Заказов {}/{}, {} {}{}{}{}{}{} {}{}'.format(
+            gr_1, time, para, orders, ords, navar_price, kr, z * lev, gr_2, z * prav, sbros, gr_1, mimo_price, sbros))
+
+
+
 
     # Высчитываем сколько контрактов на указанную сумму
     def usdt_contract(self, contract):
