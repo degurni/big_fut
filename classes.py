@@ -409,7 +409,7 @@ class Bot:
         #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
         Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
         if navar_price > df.Close[-1]:
-            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
+            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, abs(gen_size)))
             AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
             # print('415 orders - {}'.format(orders))
             if 0 < orders <= conf.interval_1:
