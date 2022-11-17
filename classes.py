@@ -466,6 +466,7 @@ class Bot:
             gr_1, time, para, orders, ords, navar_price, kr, z * lev, gr_2, z * prav, sbros, gr_1, mimo_price, sbros))
 
     def progress_2(self, para, orders, ords, navar_price, price_close, mimo_price):
+        lev = 20
         kr = '\033[31m'
         gr_1 = '\033[32m'
         gr_2 = '\033[32m'
@@ -474,7 +475,8 @@ class Bot:
         navar_price = float(navar_price)
         mimo_price = float(mimo_price)
         delen = abs((navar_price - mimo_price) / pruf)
-        lev = round(abs((navar_price - price_close) / delen))
+        if delen != 0:
+            lev = round(abs((navar_price - price_close) / delen))
         prav = pruf - lev
         z = '#'
         time = self.tm()
