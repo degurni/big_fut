@@ -20,7 +20,7 @@ whait_list = ['DYDX_USDT', 'DOT_USDT', 'SAND_USDT', 'ADA_USDT', 'DOGE_USDT',
 # Размер позиции в USDT (примерно)
 size_usdt = 0.5
 # Количество одновременных позиций
-max_poz = 3
+max_poz = 2
 
 # Размер прибыли с позиции и размер выставления следующего ордера
 navar = 0.5  # %

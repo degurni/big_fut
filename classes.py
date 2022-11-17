@@ -548,3 +548,26 @@ class Indicater:
                 signal[i] = 1
         df['sigCCI'] = signal
         return df
+
+    def cci_2(self, df):
+        '''
+        Если CCI пересекает предел +100 сверху вниз - Short
+        если CCI пересекает предел -100 снизу вверх - Long
+        :param df:
+        :return:
+        '''
+        df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
+        s = [0] * len(df)
+        signal = [0] * len(df)
+        for i in range(len(df)):
+            if df.CCI[i] < -100:
+                s[i] = -1
+            elif df.CCI[i] > 100:
+                s[i] = 1
+        for i in range(len(df)):
+            if s[i] == 0 and s[i-1] == -1:
+                signal[i] = 1
+            if s[i] == 0 and s[i-1] == 1:
+                signal[i] = -1
+        df['sigCCI'] = signal
+        return df
