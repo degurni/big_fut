@@ -201,7 +201,7 @@ class Bot:
         # преобразуем список в ДатаФрейм
         df = Bot().frame(data)
         # добавляем индикатор CCI
-        df = Indicater().cci(df=df)
+        df = Indicater().cci_1(df=df)
         # df.to_csv('dat.csv')
         return df
 
@@ -526,7 +526,7 @@ class Indicater:
     def __init__(self):
         pass
 
-    def cci(self, df):
+    def cci_1(self, df):
         """
         :param df:
         :return:
