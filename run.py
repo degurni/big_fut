@@ -57,12 +57,12 @@ def big_fut():
                     poz = ag.get_position(contract=para)  # проверяем открыта ли позиция
                     if poz.size > 0:  # если уже открыта LONG-позиция
                         df = bot.create_df(para=para)  # создаём датафрейм с последними свечами и сигналами индикаторов
-                        t = bot.check_profit_long(df=df, para=para)
+                        t = bot.check_profit_long_2(df=df, para=para)
                         if t:
                             kol_poz -= 1
                     elif poz.size < 0:  # если уже открыта SHORT-позиция
                         df = bot.create_df(para=para)  # создаём датафрейм с последними свечами и сигналами индикаторов
-                        t = bot.check_profit_short(df=df, para=para)
+                        t = bot.check_profit_short_2(df=df, para=para)
                         if t:
                             kol_poz -= 1
 

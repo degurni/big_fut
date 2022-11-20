@@ -201,8 +201,8 @@ class Bot:
         # преобразуем список в ДатаФрейм
         df = Bot().frame(data)
         # добавляем индикатор CCI
-        df = Indicater().cci_1(df=df)
-        # df.to_csv('dat.csv')
+        df = Indicater().cci_2(df=df)
+        df.to_csv('dat.csv')
         return df
 
     # преобразуем список в ДатаФрейм
@@ -356,6 +356,81 @@ class Bot:
         Bot().write_json(data=data, para=para)
         return k
 
+    def check_profit_long_2(self, df, para):
+        """
+        :param df:
+        :param para:
+        :return:
+        """
+        k = False
+        data = Bot().read_json(para)
+        orders = len(data)
+        ords = 0
+        # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
+        gen_size = 0  # количество контрактов в ордер
+        sum_price = 0  # общая цена в закрываемых ордерах
+        average_price = None  # средняя цена входа закрываемых ордеров
+        if 0 < orders <= conf.interval_1:  # если исполненных ордеров от 1 до 4 то закрываем все в профит
+            ords = len(data)
+            for i in data:
+                gen_size += int(i['size'])
+                sum_price += float(i['price'])
+            average_price = sum_price / ords
+        elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
+            ords = 2
+            gen_size = float(data[-1]['size']) + float(data[0]['size'])
+            average_price = (float(data[0]['price']) + float(data[-1]['price'])) / ords
+        elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
+            ords = 3
+            gen_size = float(data[-1]['size']) + float(data[-2]['size']) + float(data[0]['size'])
+            average_price = (float(data[0]['price']) + float(data[-2]['price']) + float(data[-1]['price'])) / ords
+        elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+            ords = 4
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[-3]['size']) + float(data[0]['size']))
+            average_price = (float(data[0]['price']) + float(data[-3]['price'])
+                             + float(data[-2]['price']) + float(data[-1]['price'])) / ords
+        navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
+        mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
+        navar_price = Decimal(navar_price)
+        navar_price = navar_price.quantize(Decimal(data[-1]['price']))
+        mimo_price = Decimal(mimo_price)
+        mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
+        # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+        #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
+        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
+        if float(navar_price) < df.Close[-1] and df.CCI[-1] < df.CCI[-2]:
+            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
+            AG().create_futures_order(side='short', contract=para, size=gen_size)
+            if 0 < orders <= conf.interval_1:
+                data = []
+            elif conf.interval_1 < orders <= conf.interval_2:
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_2 < orders <= conf.interval_3:
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+            elif conf.interval_3 < orders:
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+            Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
+        elif mimo_price > df.Close[-1] and df.CCI[-1] > df.CCI[-2]:
+            s = AG().create_futures_order(side='long', contract=para, size=data[-1]['size'])
+            Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, s.size, s.fill_price))
+            inf = {'id': s.id,
+                   'contract': s.contract,
+                   'size': s.size,
+                   'price': s.fill_price,
+                   'tkfr': s.tkfr}
+            data.append(inf)
+        if len(data) == 0:
+            k = True
+        Bot().write_json(data=data, para=para)
+        return k
+
     # проверяем профит SHORT-позиции
     def check_profit_short(self, df, para):
         """
@@ -432,6 +507,95 @@ class Bot:
                 # print('433 len_data - {}'.format(len(data)))
             Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
         elif mimo_price < df.Close[-1]:
+            s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
+            # print(s)
+            Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, abs(s.size), s.fill_price))
+            inf = {'id': s.id,
+                   'contract': s.contract,
+                   'size': s.size,
+                   'price': s.fill_price,
+                   'tkfr': s.tkfr}
+            data.append(inf)
+        if len(data) == 0:
+            k = True
+        Bot().write_json(data=data, para=para)
+        return k
+
+    def check_profit_short_2(self, df, para):
+        """
+        :param df:
+        :param para:
+        :return:
+        """
+        k = False
+        data = Bot().read_json(para)
+        orders = len(data)
+        ords = 0
+        # Bot().debug('debug', '{}: исполнено заказов - {}'.format(para, orders))
+        gen_size = 0  # количество контрактов в ордер
+        sum_price = 0  # общая цена в закрываемых ордерах
+        average_price = None  # средняя цена входа закрываемых ордеров
+
+        if 0 < orders <= conf.interval_1:  # если исполненных ордеров от 1 до 4 то закрываем все в профит
+            ords = len(data)
+            for i in data:
+                gen_size += int(i['size'])  # сколько контрактов на продажу
+                sum_price += float(i['price'])  # средняя цена покупки этих контрактов
+            average_price = sum_price / ords
+
+        elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
+            ords = 2
+            gen_size = float(data[-1]['size']) + float(data[0]['size'])  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) +
+                             float(data[-1]['price'])) / ords  # средняя цена покупки этих контрактов
+
+        elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
+            ords = 3
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[0]['size']))  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) + float(data[-2]['price'])
+                             + float(data[-1]['price'])) / ords  # средняя цена покупки этих контрактов
+
+        elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+            ords = 4
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[-3]['size']) + float(data[0]['size']))  # сколько контрактов на продажу
+            average_price = (float(data[0]['price']) + float(data[-3]['price']) + float(data[-2]['price'])
+                             + float(data[-1]['price'])) / ords  # средняя цена покупки этих контрактов
+
+        navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
+        mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
+        navar_price = Decimal(navar_price)
+        navar_price = navar_price.quantize(Decimal(data[-1]['price']))
+        mimo_price = Decimal(mimo_price)
+        mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
+        # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
+        #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
+        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
+        if navar_price > df.Close[-1] and df.CCI[-1] > df.CCI[-2]:
+            Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, abs(gen_size)))
+            AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
+            # print('415 orders - {}'.format(orders))
+            if 0 < orders <= conf.interval_1:
+                data = []
+                # print('418 len_data - {}'.format(len(data)))
+            elif conf.interval_1 < orders <= conf.interval_2:  # если исполненных ордеров от 5 до 9 то закрываем 2
+                data.pop(-1)
+                data.pop(0)
+                # print('422 len_data - {}'.format(len(data)))
+            elif conf.interval_2 < orders <= conf.interval_3:  # если исполненных ордеров от 10 до 15 то закрываем 3
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+                # print('427 len_data - {}'.format(len(data)))
+            elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
+                # print('433 len_data - {}'.format(len(data)))
+            Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
+        elif mimo_price < df.Close[-1] and df.CCI[-1] < df.CCI[-2]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
             # print(s)
             Bot().debug('inform', '{} : добавляем {} контрактов по цене {}'.format(para, abs(s.size), s.fill_price))
@@ -568,6 +732,42 @@ class Indicater:
             if s[i] == 0 and s[i-1] == -1:
                 signal[i] = 1
             if s[i] == 0 and s[i-1] == 1:
+                signal[i] = -1
+        df['sigCCI'] = signal
+        return df
+
+    def cci_3(self, df):
+        """
+        Если CCI пересекает предел +100 сверху вниз - Short
+        если CCI пересекает предел -100 снизу вверх - Long
+        По 5 свечам определяем восходящий или низходящий тренд
+        :param df:
+        :return:
+        """
+        df['CCI'] = ta.cci(df.High, df.Low, df.Close, length=20)
+        chandles = 4
+        s_1 = [0] * len(df)
+        s_2 = [0] * len(df)
+        signal = [0] * len(df)
+        for i in range(len(df)):
+            if df.CCI[i] > df.CCI[i - chandles:i].mean():
+                s_1[i] = 1
+            elif df.CCI[i] < df.CCI[i - chandles:i].mean():
+                s_1[i] = -1
+        for i in range(len(df)):
+            if df.CCI[i] < -100:
+                s_2[i] = -1
+            elif df.CCI[i] > 100:
+                s_2[i] = 1
+        for i in range(len(df)):
+            if s_1[i] == -1 and s_1[i-1] == 1:
+                signal[i] = -1
+            if s_1[i] == 1 and s_1[i-1] == -1:
+                signal[i] = 1
+        for i in range(len(df)):
+            if s_2[i] == 0 and s_2[i-1] == -1:
+                signal[i] = 1
+            if s_2[i] == 0 and s_2[i-1] == 1:
                 signal[i] = -1
         df['sigCCI'] = signal
         return df

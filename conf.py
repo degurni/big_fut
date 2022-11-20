@@ -14,13 +14,16 @@ base_currency = 'usdt'  # Название базовой монеты('usdt')
 tf = '5m'
 
 #  'BTC_USDT'
-whait_list = ['DYDX_USDT', 'DOT_USDT', 'SAND_USDT', 'ADA_USDT', 'DOGE_USDT',
-              'XRP_USDT', 'SFP_USDT', 'SXP_USDT']
+whait_list = ['DYDX_USDT', 'DOT_USDT', 'DOGE_USDT',
+              'XRP_USDT', 'SFP_USDT', 'ADA_USDT', 'SXP_USDT', 'SAND_USDT']
+
+# whait_list = ['SXP_USDT', 'DOT_USDT'], 'LINK_USDT'
+
 
 # Размер позиции в USDT (примерно)
 size_usdt = 0.5
 # Количество одновременных позиций
-max_poz = 2
+max_poz = 3
 
 # Размер прибыли с позиции и размер выставления следующего ордера
 navar = 0.5  # %
