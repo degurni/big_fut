@@ -572,6 +572,8 @@ class Bot:
         # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
         #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
         Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
+        # print(navar_price, df.Close[-1])
+        # print(df.CCI[-1], df.CCI[-2])
         if navar_price > df.Close[-1] and df.CCI[-1] > df.CCI[-2]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, abs(gen_size)))
             AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
