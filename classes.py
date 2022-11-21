@@ -324,7 +324,7 @@ class Bot:
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
         # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
         #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
-        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
+        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price, 'long')
         if float(navar_price) < df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, gen_size))
             AG().create_futures_order(side='short', contract=para, size=gen_size)
@@ -491,7 +491,7 @@ class Bot:
         mimo_price = mimo_price.quantize(Decimal(data[-1]['price']))
         # Bot().debug('debug', '{}: Заказов {}/{}, TP - {}, Pr - {}, DZ - {}'
         #             .format(para, orders, ords, navar_price, df.Close[-1], mimo_price))
-        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price)
+        Bot().progress_2(para, orders, ords, navar_price, df.Close[-1], mimo_price, 'short')
         if navar_price > df.Close[-1]:
             Bot().debug('inform', '{} : Продаём {} контрактов'.format(para, abs(gen_size)))
             AG().create_futures_order(side='long', contract=para, size=abs(gen_size))
