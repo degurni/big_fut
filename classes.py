@@ -653,7 +653,7 @@ class Bot:
         z = '.'
         if side == 'short':
             delen = (mimo_price - navar_price) / pruf
-            if price_close < navar_price:
+            if price_close <= navar_price:
                 lev = 0
                 z = '-'
             else:
