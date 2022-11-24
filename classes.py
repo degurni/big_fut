@@ -661,7 +661,7 @@ class Bot:
 
         elif side == 'long':
             delen = (navar_price - mimo_price) / pruf
-            if price_close > navar_price:
+            if price_close >= navar_price:
                 lev = 0
                 z = '-'
             else:
