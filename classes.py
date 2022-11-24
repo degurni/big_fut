@@ -644,14 +644,15 @@ class Bot:
     def progress_2(self, para, orders, ords, navar_price, price_close, mimo_price, side):
         lev = 20
         kr = '\033[31m'
-        gr_1 = '\033[32m'
-        gr_2 = '\033[32m'
+        gr = '\033[32m'
         sbros = '\033[0m'
         pruf = 20
         navar_price = float(navar_price)
         mimo_price = float(mimo_price)
         z = '.'
+        pr = para
         if side == 'short':
+            pr = '{}{}{}{}{}'.format(sbros, kr, para, sbros, gr)
             delen = (mimo_price - navar_price) / pruf
             if price_close <= navar_price:
                 lev = 0
@@ -673,7 +674,7 @@ class Bot:
         #     gr_1, time, para, orders, ords, navar_price, gr_2, z * lev, kr, z * prav, sbros, gr_1, mimo_price, sbros))
         # print()
         print('{}{} - {}: Заказов {}/{}, {} {}{}{}{}{}{} {}{}'.format(
-            gr_1, time, para, orders, ords, navar_price, kr, z * lev, gr_2, z * prav, sbros, gr_1, mimo_price, sbros))
+            gr, time, para, orders, ords, navar_price, kr, z * lev, gr, z * prav, sbros, gr, mimo_price, sbros))
 
 
 
