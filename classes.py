@@ -659,6 +659,9 @@ class Bot:
                 z = '-'
             else:
                 lev = round((price_close - navar_price) / delen)
+                if lev > pruf:
+                    lev = pruf
+                    z = '-'
 
         elif side == 'long':
             delen = (navar_price - mimo_price) / pruf
@@ -667,6 +670,8 @@ class Bot:
                 z = '-'
             else:
                 lev = round((navar_price - price_close) / delen)
+        if lev > pruf:
+            lev = pruf
         prav = pruf - lev
 
         time = self.tm()
@@ -674,7 +679,7 @@ class Bot:
         #     gr_1, time, para, orders, ords, navar_price, gr_2, z * lev, kr, z * prav, sbros, gr_1, mimo_price, sbros))
         # print()
         print('{}{} - {}: Заказов {}/{}, {} {}{}{}{}{}{} {}{}'.format(
-            gr, time, para, orders, ords, navar_price, kr, z * lev, gr, z * prav, sbros, gr, mimo_price, sbros))
+            gr, time, pr, orders, ords, navar_price, kr, z * lev, gr, z * prav, sbros, gr, mimo_price, sbros))
 
 
 
