@@ -646,7 +646,7 @@ class Bot:
         kr = '\033[31m'
         gr = '\033[32m'
         sbros = '\033[0m'
-        pruf = 20
+        pruf = 10
         navar_price = float(navar_price)
         mimo_price = float(mimo_price)
         z = '.'
