@@ -656,22 +656,23 @@ class Bot:
             delen = (mimo_price - navar_price) / pruf
             if price_close <= navar_price:
                 lev = 0
-                z = '-'
+                z = '<'
             else:
                 lev = round((price_close - navar_price) / delen)
                 if lev > pruf:
                     lev = pruf
-                    z = '-'
+                    z = '>'
 
         elif side == 'long':
             delen = (navar_price - mimo_price) / pruf
             if price_close >= navar_price:
                 lev = 0
-                z = '-'
+                z = '<'
             else:
                 lev = round((navar_price - price_close) / delen)
         if lev > pruf:
             lev = pruf
+            z = '>'
         prav = pruf - lev
 
         time = self.tm()
