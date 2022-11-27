@@ -603,7 +603,7 @@ class Bot:
                 data.pop(-1)
                 data.pop(0)
                 # print('427 len_data - {}'.format(len(data)))
-            elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+            elif conf.interval_3 < orders <= conf.interval_4:  # если исполненных ордеров больше 15 то закрываем 4
                 data.pop(-1)
                 data.pop(-1)
                 data.pop(-1)
