@@ -564,12 +564,17 @@ class Bot:
             average_price = (float(data[0]['price']) + float(data[-2]['price'])
                              + float(data[-1]['price'])) / ords  # средняя цена покупки этих контрактов
 
-        elif conf.interval_3 < orders:  # если исполненных ордеров больше 15 то закрываем 4
+        elif conf.interval_3 < orders <= conf.interval_4:  # если исполненных ордеров больше 15 то закрываем 4
             ords = 4
             gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
                         + float(data[-3]['size']) + float(data[0]['size']))  # сколько контрактов на продажу
             average_price = (float(data[0]['price']) + float(data[-3]['price']) + float(data[-2]['price'])
                              + float(data[-1]['price'])) / ords  # средняя цена покупки этих контрактов
+
+        elif conf.interval_4 < orders:  # если исполненных ордеров больше 20
+            average_price = float(data[-1]['price'])
+            ords = 1
+            gen_size = float(data[-1]['size'])
 
         navar_price = average_price * conf.navar_short  # желаемая цена обратной покупки серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_short  # цена дозакупа
@@ -604,6 +609,9 @@ class Bot:
                 data.pop(-1)
                 data.pop(0)
                 # print('433 len_data - {}'.format(len(data)))
+            elif conf.interval_4 < orders:
+                data.pop(-1)
+
             Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
         elif mimo_price < df.Close[-1] and df.CCI[-1] < df.CCI[-2]:
             s = AG().create_futures_order(side='short', contract=para, size=abs(data[-1]['size']))
