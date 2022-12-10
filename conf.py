@@ -21,7 +21,7 @@ whait_list = ['DYDX_USDT', 'DOT_USDT', 'DOGE_USDT',
 
 
 # Размер позиции в USDT (примерно)
-size_usdt = 0.5
+size_usdt = 1
 # Количество одновременных позиций
 max_poz = 3
 

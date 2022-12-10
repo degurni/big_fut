@@ -391,9 +391,11 @@ class Bot:
             average_price = (float(data[0]['price']) + float(data[-3]['price'])
                              + float(data[-2]['price']) + float(data[-1]['price'])) / ords
         elif conf.interval_4 < orders:  # если исполненных ордеров больше 20
-            average_price = float(data[-1]['price'])
-            ords = 1
-            gen_size = float(data[-1]['size'])
+            ords = 5
+            gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
+                        + float(data[-3]['size']) + float(data[-4]['size']) + float(data[0]['size']))
+            average_price = (float(data[0]['price']) + float(data[-4]['price']) + float(data[-3]['price'])
+                             + float(data[-2]['price']) + float(data[-1]['price'])) / ords
         navar_price = average_price * conf.navar_long  # желаемая цена продажи серии ордеров
         mimo_price = float(data[-1]['price']) * conf.mimo_long  # цена дозакупа
         navar_price = Decimal(navar_price)
@@ -423,6 +425,10 @@ class Bot:
                 data.pop(0)
             elif conf.interval_4 < orders:
                 data.pop(-1)
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(-1)
+                data.pop(0)
             Bot().debug('inform', '{} : Должо остаться {} заказов'.format(para, len(data)))
         elif mimo_price > df.Close[-1] and df.CCI[-1] > df.CCI[-2]:
 
