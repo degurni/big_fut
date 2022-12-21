@@ -79,10 +79,10 @@ def big_fut():
         except KeyboardInterrupt:
             bot.debug('inform', 'Работа бота завершена')
             sys.exit(0)
-        except Exception as e:
-            bot.debug('inform', 'Возникла непредвиденная ошибка - {}'.format(e))
-            time.sleep(conf.sleep)
-            bot.debug('inform', 'Перезапускаюсь...')
+        # except Exception as e:
+        #     bot.debug('inform', 'Возникла непредвиденная ошибка - {}'.format(e))
+        #     time.sleep(conf.sleep)
+        #     bot.debug('inform', 'Перезапускаюсь...')
 
 
 if __name__ == '__main__':

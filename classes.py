@@ -392,6 +392,7 @@ class Bot:
                              + float(data[-2]['price']) + float(data[-1]['price'])) / ords
         elif conf.interval_4 < orders:  # если исполненных ордеров больше 20
             ords = 5
+
             gen_size = (float(data[-1]['size']) + float(data[-2]['size'])
                         + float(data[-3]['size']) + float(data[-4]['size']) + float(data[0]['size']))
             average_price = (float(data[0]['price']) + float(data[-4]['price']) + float(data[-3]['price'])
